@@ -3,6 +3,7 @@ import numpy
 import math
 import sys
 
+
 class NeuralNetwork:
     def __init__(self, d_input, d_output, lr=0.1, max_it=100, activateFunc="step"):
         self.lr = lr
@@ -60,11 +61,11 @@ class NeuralNetwork:
             for c, column in enumerate(row):
                 resp[r][c] = 1 / (1 + math.exp(-column))
 
-        return self.normalizeByGreater(resp)
+        return self.normalize_unit(resp)
 
     # Normaliza a matriz resultado, transformando o maior valor
     # dentre os elementos o unico não nulo
-    def normalizeByGreater(self, matrix):
+    def normalize_unit(self, matrix):
         resp = matrix
         greater = (0, 0)
         for r, row in enumerate(resp):
@@ -92,6 +93,16 @@ class NeuralNetwork:
                     resp[r][c] = 1
         return resp
 
+    # Avalia a rede neural
+    def check_accuaracy(self):
+        hits = 0
+        for r, row in enumerate(self.d_input):
+            result = self.evaluate(numpy.asmatrix(row).T)
+            if (result.T == numpy.asmatrix(self.d_output[r])).all():
+                hits = hits + 1
+
+        return hits / self.d_input.shape[0]
+
 
 if __name__ == "__main__":
 
@@ -117,23 +128,24 @@ if __name__ == "__main__":
     classes = numpy.array(classes)
 
     to_classify = []
-    print("Insira os valores para a avaliação: num -> [PRESS ENTER]")
+    print("\nInsira os valores para a avaliação: num -> [PRESS ENTER]")
     for i in range(4):
         n = input("num {}: ".format(i+1))
         to_classify.append(float(n))
 
     print("")
-    max_it = int(input("Insira o máximo de iterações: dica(200)"))
+    max_it = int(input("Insira o máximo de iterações: dica(200): "))
 
     print("")
     activateFunc = "step"
     if int(input("Escolha a função de ativação: sigmoid(1) - step(2): ")) == 1:
         activateFunc = "sigmoid"
 
-    # 6.8,2.8,4.8,1.4
     nn = NeuralNetwork(
         d_input, classes, max_it=max_it, activateFunc=activateFunc)
     nn.train()
+
+    print("\nAcurácia da Rede: {}".format(nn.check_accuaracy()))
 
     result = nn.evaluate(numpy.asmatrix(to_classify).T, True)
 
