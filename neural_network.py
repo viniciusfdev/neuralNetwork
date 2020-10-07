@@ -23,7 +23,7 @@ class NeuralNetwork:
 
         ERRO = 1
         it = 0
-        while it < self.max_it and ERRO > 0.1:
+        while it < self.max_it and ERRO > 0:
             ERRO = 0
             for index, x in enumerate(self.d_input):
                 y = self.evaluate(numpy.asmatrix(x).T)
@@ -33,7 +33,9 @@ class NeuralNetwork:
                 ERRO = ERRO + numpy.sum(self.square(e))
             it = it + 1
 
-        print("\nFinal Weights")
+        print("\nErro final da rede: {}".format(ERRO))
+
+        print("\nPesos Finais")
         print(self.weights)
         _isTrained = True
 
@@ -87,10 +89,10 @@ class NeuralNetwork:
         resp = matrix
         for r, row in enumerate(resp):
             for c, column in enumerate(row):
-                if column < 0.5:
-                    resp[r][c] = 0
-                else:
+                if column >= 0:
                     resp[r][c] = 1
+                else:
+                    resp[r][c] = 0
         return resp
 
     # Avalia a rede neural
@@ -149,7 +151,7 @@ if __name__ == "__main__":
 
     result = nn.evaluate(numpy.asmatrix(to_classify).T, True)
 
-    print("\nFinal Results")
+    print("\nResultado da Avaliação")
     for key, value in classification.items():
         if (result.T == value).all():
             print("{} = {}".format(result.T, key))
