@@ -96,14 +96,14 @@ class NeuralNetwork:
         return resp
 
     # Avalia a rede neural
-    def check_accuaracy(self):
+    def check_accuaracy(self, d_input, d_output):
         hits = 0
-        for r, row in enumerate(self.d_input):
+        for r, row in enumerate(d_input):
             result = self.evaluate(numpy.asmatrix(row).T)
-            if (result.T == numpy.asmatrix(self.d_output[r])).all():
+            if (result.T == numpy.asmatrix(d_output[r])).all():
                 hits = hits + 1
 
-        return hits / self.d_input.shape[0]
+        return hits / d_input.shape[0]
 
 
 if __name__ == "__main__":
@@ -144,10 +144,10 @@ if __name__ == "__main__":
         activateFunc = "sigmoid"
 
     nn = NeuralNetwork(
-        d_input, classes, max_it=max_it, activateFunc=activateFunc)
+        d_input[:d_input.shape[0]-30], classes, max_it=max_it, activateFunc=activateFunc)
     nn.train()
 
-    print("\nAcurácia da Rede: {}".format(nn.check_accuaracy()))
+    print("\nAcurácia da Rede: {}".format(nn.check_accuaracy(d_input[3:], classes)))
 
     result = nn.evaluate(numpy.asmatrix(to_classify).T, True)
 
